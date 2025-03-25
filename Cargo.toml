@@ -1,0 +1,27 @@
+[package]
+name = "softfloat_pure"
+version = "0.3.4"
+description = "Pure Rust port of berkeley-softfloat-3 + softfloat-wrapper"
+edition = "2021"
+authors = [ "github.com/HarryR", "John R. Hauser", "dalance@gmail.com" ]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "floatverify"
+path = "bin/floatverify.rs"
+
+[features]
+default = []
+
+[dependencies]
+num-traits = { version = "0.2", default-features = false }
+
+[lints.rust]
+warnings = "deny"
+
+[lints.clippy]
+all = "deny"
+pedantic = "deny"
+nursery = "deny"
+perf = "deny"
