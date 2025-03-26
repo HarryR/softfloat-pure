@@ -1,3 +1,5 @@
+PYTHON ?= python3
+
 all:
 	cargo build
 
@@ -6,7 +8,7 @@ all:
 full-coverage:
 	cargo llvm-cov clean
 	cargo llvm-cov test --no-report
-	python3 testfloat-permute.py native coverage
+	$(PYTHON) testfloat-permute.py native coverage
 	cargo llvm-cov report --html
 
 coverage:
