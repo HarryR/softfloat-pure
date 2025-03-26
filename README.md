@@ -1,13 +1,15 @@
 # softfloat-pure
 
+[![Rust Build and TestFloat](https://github.com/HarryR/softfloat-pure/actions/workflows/rust-build-and-testfloat.yml/badge.svg)](https://github.com/HarryR/softfloat-pure/actions/workflows/rust-build-and-testfloat.yml)
+[![made-with-rust](https://img.shields.io/badge/Made%20with-Rust-red.svg)](https://www.rust-lang.org/)
+
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![made-with-rust](https://img.shields.io/badge/Made%20with-Rust-red.svg)](https://www.rust-lang.org/)
 
 **A pure Rust library for [RISC-V] compatible [IEEE-754] floating point operations (single & double precision).**
 
-[Berkeley Softfloat 3e] was re-translated by hand from C to Rust as the initial automated [C2Rust] translation from the [softfloat-c] project required extensive modifications for readability, `const` correctness, and to pass the Berkeley Testfloat suite of tests. The goals of this project are:
+[Berkeley Softfloat 3e] was re-translated by hand from C to Rust as the initial automated [C2Rust] translation from the [softfloat-c] project required extensive modifications for readability, `const` correctness, and to pass the Berkeley Testfloat suite of tests. A small idiomatic Rust layer is provided by an adaption of [softfloat-wrapper]. The goals of this project are:
 
  * Compatible with restrictive environments (SGX, TEE, ZKP, WASM, microcontroller, firmware etc.)
  * Pure Rust, no C libraries, minimal dependencies
@@ -21,6 +23,7 @@
 [C2Rust]: https://github.com/immunant/c2rust
 [softfloat-c]: https://github.com/chipshort/softfloat-c
 [Berkeley Softfloat 3e]: https://github.com/ucb-bar/berkeley-softfloat-3
+[softfloat-wrapper]: https://github.com/dalance/softfloat-wrapper
 
 ## Usage
 
@@ -28,18 +31,47 @@ Add the dependency to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-softfloat-pure = { git = "https://github.com/HarryR/softfloat-pure.git" }
+softfloat_pure = { git = "https://github.com/HarryR/softfloat-pure.git" }
+```
+
+The main differences vs Berkeley SoftFloat and `softfloat-wrapper` are that there is no global or thread-local state and no implicit rounding mode. The `FPU` struct works with the `float32_t` and `float64_t` types:
+
+```rust
+use softfloat_pure::*;
+let fpu = FPU::default();
+let a = float32_t::from_bits(0x...);
+let b = float32_t::from_bits(0x...);
+let res = fpu.add(a,b, RoundingMode::RneTiesToEven);
+assert_eq!(!fpu.flags.is_infinite(), false);
+assert_eq!(res.to_bits(), 0x...);
+```
+
+This may seem verbose, but the RISC-V instruction set requires you to specify the rounding mode for most floating point operations, even though LLVM and GCC may only emit instructions using the default rounding mode (round to nearest, ties to even).
+
+You can directly access the underlying SoftFloat functions, like `f32_mulAdd` via the `softfloat_pure::softfloat::*` module. These functions accept the tininess parameter (specified as either before or after rounding) in addition to the rounding mode, and return a `u8` representing any raised flags in addition to the result, for example:
+
+```rust
+use softfloat_pure::softfloat::*;
+let a = float32_t::from_bits(0x...);
+let b = float32_t::from_bits(0x...);
+let x = f32_add(a,b, 0, 0);
+assert_eq!(x.0, 0x...); // result
+assert_eq!(x.1, 0);     // flags
 ```
 
 ## Testing
 
-The `floatverify` binary works together with  `testfloat_gen` from the Berkeley testfloat project, we combine this a Python script (`testfloat-permute.py`) which runs through the permutations of all floating point operations in all modes to verify whether the implementation in this library matches the Softfloat reference implementation.
+The `floatverify` binary works together with  `testfloat_gen` from the Berkeley testfloat project, we combine this with a Python script (`testfloat-permute.py`) that runs through the permutations of all floating point operations in all modes to verify whether the implementation in this library matches the Softfloat reference implementation.
 
 For example, while also capturing coverage using `llvm-cov`:
 
     ./testfloat/berkeley-testfloat-3/build/Linux-x86_64-GCC/testfloat_gen -rminMag -tininessafter -notexact f32_mulAdd | cargo llvm-cov --offline --no-clean --no-cfg-coverage run -q -- f32_mulAdd -rminMag -tininessafter -notexact -exit
 
-Currently we're at just under 90% coverage, although the full 'level 2' suite of tests takes a long time to run it provides strong confidence that this library is bitwise identical in operation to Softfloat 3e and most if not all edge cases are accounted for
+Note that the `Linux-x86_64-GCC` build target is built with the RISCV profile.
+
+Currently we're at just under 90% coverage, although the full 'level 2' suite of tests takes a long time to run it provides strong confidence that this library is bitwise identical in operation to Softfloat 3e and most if not all edge cases are accounted for. It subsequently passes the [RISCOF] test suite when used with a RISC-V simulator.
+
+[RISCOF]: https://riscof.readthedocs.io/en/stable/
 
 # License
 

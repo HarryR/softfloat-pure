@@ -1,0 +1,38 @@
+name: Rust Build and TestFloat
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install Rust toolchain
+      uses: dtolnay/rust-toolchain@stable
+
+    - name: Cache Rust dependencies
+      uses: Swatinem/rust-cache@v2
+
+    - name: Run Clippy
+      run: cargo clippy
+
+    - name: Build Rust project
+      run: cargo build
+
+    - name: Run Rust tests
+      run: cargo test
+
+    - name: Run make in testfloat directory
+      run: |
+        cd testfloat
+        make
+
+    - name: Run testfloat-permute.py script
+      run: |
+        python3 testfloat-permute.py f32 rnear_even exact tininessafter

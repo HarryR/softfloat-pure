@@ -33,11 +33,12 @@ $(SIM):
 	cd ../../ && cargo build
 
 .PHONY: gen
-gen: berkeley-testfloat-3/build/Linux-x86_64-GCC/testfloat \
-	 berkeley-testfloat-3/build/Linux-RISCV64-GCC/testfloat
+gen: berkeley-testfloat-3/build/Linux-x86_64-GCC/testfloat
+
+gen-rv64: berkeley-testfloat-3/build/Linux-RISCV64-GCC/testfloat
 
 .PHONY: run-testfloat
-run-testfloat: berkeley-testfloat-3/build/Linux-RISCV64-GCC/testfloat $(SIM)
+run-testfloat: berkeley-testfloat-3/build/Linux-x86_64-GCC/testfloat $(SIM)
 	$(SIM) $< -- -list
 	$(SIM) $< -- -checkAll -all1 -all2 -level 2 -errorstop
 

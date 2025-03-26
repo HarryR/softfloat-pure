@@ -4,8 +4,8 @@ use core::borrow::Borrow;
 
 use super::{
     softfloat::{
-        float32_t, float64_t, i32_to_f32, i32_to_f64, i64_to_f32, i64_to_f64, init_detectTininess,
-        ui32_to_f32, ui32_to_f64, ui64_to_f32, ui64_to_f64,
+        float32_t, float64_t, i32_to_f32, i32_to_f64, i64_to_f32, i64_to_f64,
+        init_detectTininess, ui32_to_f32, ui32_to_f64, ui64_to_f32, ui64_to_f64,
     },
     wrapper::{ExceptionFlags, Float, RoundingMode, TininessMode},
 };
@@ -272,25 +272,25 @@ impl FPU {
 impl FPU {
     #[inline]
     #[must_use]
-    pub const fn f32_from_i64(&mut self, a: i64, rnd: RoundingMode) -> float32_t {
+    pub fn f32_from_i64(&mut self, a: i64, rnd: RoundingMode) -> float32_t {
         self.flagged_f32(i64_to_f32(a, rnd.to_softfloat(), self.detect_tininess))
     }
 
     #[inline]
     #[must_use]
-    pub const fn f32_from_i32(&mut self, a: i32, rnd: RoundingMode) -> float32_t {
+    pub fn f32_from_i32(&mut self, a: i32, rnd: RoundingMode) -> float32_t {
         self.flagged_f32(i32_to_f32(a, rnd.to_softfloat(), self.detect_tininess))
     }
 
     #[inline]
     #[must_use]
-    pub const fn f32_from_u64(&mut self, a: u64, rnd: RoundingMode) -> float32_t {
+    pub fn f32_from_u64(&mut self, a: u64, rnd: RoundingMode) -> float32_t {
         self.flagged_f32(ui64_to_f32(a, rnd.to_softfloat(), self.detect_tininess))
     }
 
     #[inline]
     #[must_use]
-    pub const fn f32_from_u32(&mut self, a: u32, rnd: RoundingMode) -> float32_t {
+    pub fn f32_from_u32(&mut self, a: u32, rnd: RoundingMode) -> float32_t {
         self.flagged_f32(ui32_to_f32(a, rnd.to_softfloat(), self.detect_tininess))
     }
 }
@@ -298,25 +298,25 @@ impl FPU {
 impl FPU {
     #[inline]
     #[must_use]
-    pub const fn f64_from_i64(&mut self, a: i64, rnd: RoundingMode) -> float64_t {
+    pub fn f64_from_i64(&mut self, a: i64, rnd: RoundingMode) -> float64_t {
         self.flagged_f64(i64_to_f64(a, rnd.to_softfloat(), self.detect_tininess))
     }
 
     #[inline]
     #[must_use]
-    pub const fn f64_from_i32(&mut self, a: i32) -> float64_t {
+    pub fn f64_from_i32(&mut self, a: i32) -> float64_t {
         i32_to_f64(a)
     }
 
     #[inline]
     #[must_use]
-    pub const fn f64_from_u64(&mut self, a: u64, rnd: RoundingMode) -> float64_t {
+    pub fn f64_from_u64(&mut self, a: u64, rnd: RoundingMode) -> float64_t {
         self.flagged_f64(ui64_to_f64(a, rnd.to_softfloat(), self.detect_tininess))
     }
 
     #[inline]
     #[must_use]
-    pub const fn f64_from_u32(&mut self, a: u32) -> float64_t {
+    pub fn f64_from_u32(&mut self, a: u32) -> float64_t {
         ui32_to_f64(a)
     }
 }

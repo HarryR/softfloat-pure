@@ -66,6 +66,10 @@ for a in sys.argv[1:]:
         QEMU = True
     elif a == 'native':
         QEMU = False
+    elif a == 'exact':
+        EXACT = ['exact']
+    elif a == 'notexact':
+        EXACT = ['notexact']
     elif a in ROUND_MODES or a == 'rodd':
         NEW_ROUND_MODES.append(a)
     elif a in TININESS:
