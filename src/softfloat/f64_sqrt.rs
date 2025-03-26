@@ -53,7 +53,7 @@ pub const fn f64_sqrt(a: float64_t, roundingMode: u8, detectTininess: u8) -> (fl
     }
     let mut rem = sigA.wrapping_sub((sig32Z as u64).wrapping_mul(sig32Z as u64));
     let q = (((rem >> 2) as u64).wrapping_mul(recipSqrt32 as u64) >> 32) as u32;
-    let mut sigZ = ((sig32Z as u64) << 32 | 1u64 << 5).wrapping_add((q as u64) << 3);
+    let mut sigZ = (((sig32Z as u64) << 32) | (1u64 << 5)).wrapping_add((q as u64) << 3);
     // ------------------------------------------------------------------------
     if ((sigZ & 0x1FF) < 0x22) {
         sigZ &= !(0x3F as u64);

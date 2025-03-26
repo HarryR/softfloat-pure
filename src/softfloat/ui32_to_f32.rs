@@ -7,7 +7,7 @@ pub const fn ui32_to_f32(a: u32, roundingMode: u8, detectTininess: u8) -> (float
     if a == 0 {
         (float32_t { v: 0 }, 0)
     } else if (a & 0x8000_0000) != 0 {
-        softfloat_roundPackToF32(false, 0x9d, (a >> 1 | a & 1), roundingMode, detectTininess)
+        softfloat_roundPackToF32(false, 0x9d, (a >> 1) | (a & 1), roundingMode, detectTininess)
     } else {
         softfloat_normRoundPackToF32(false, 0x9c, a, roundingMode, detectTininess)
     }

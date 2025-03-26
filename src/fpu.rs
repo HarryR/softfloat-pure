@@ -4,8 +4,8 @@ use core::borrow::Borrow;
 
 use super::{
     softfloat::{
-        float32_t, float64_t, i32_to_f32, i32_to_f64, i64_to_f32, i64_to_f64,
-        init_detectTininess, ui32_to_f32, ui32_to_f64, ui64_to_f32, ui64_to_f64,
+        float32_t, float64_t, i32_to_f32, i32_to_f64, i64_to_f32, i64_to_f64, init_detectTininess,
+        ui32_to_f32, ui32_to_f64, ui64_to_f32, ui64_to_f64,
     },
     wrapper::{ExceptionFlags, Float, RoundingMode, TininessMode},
 };
